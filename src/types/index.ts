@@ -33,6 +33,49 @@ export type PartnerType =
 /** Eligibility and recommendation status for an evaluated scheme. */
 export type MatchStatus = "eligible" | "potentially-eligible" | "ineligible";
 
+/** Age criteria for a scheme. */
+export interface AgeCriteria {
+  min?: number;
+  max?: number;
+}
+
+/** Income ceiling criteria for a scheme. */
+export interface IncomeCriteria {
+  maxAnnualIncome?: number;
+  maxAnnualFamilyIncome?: number;
+  isFamilyIncome?: boolean;
+  description?: string;
+}
+
+/** Applicable business stages. */
+export type BusinessStage =
+  | "ideation"
+  | "startup"
+  | "expansion"
+  | "existing"
+  | "any"
+  | "Idea / New Venture"
+  | "Existing Business";
+
+/** Structured financial benefits. */
+export interface SchemeBenefits {
+  loanMin?: number;
+  loanMax?: number;
+  maxLoanAmount?: number;
+  interestRate?: number;
+  moratoriumMonths?: number;
+  maxTenureMonths?: number;
+  marginContributionPct?: number;
+  interestSubventionPct?: number;
+  subsidyPct?: number;
+  description?: string;
+}
+
+/** Declarative criteria map. */
+export interface SchemeEligibilityCriteria {
+  [key: string]: any;
+}
+
 /** A single explainable rule used to score a scheme against an applicant. */
 export interface EligibilityRule {
   /** Human-readable description of the rule. */
@@ -295,6 +338,23 @@ export type SchemeEligibilityStatus =
   | "Needs Verification"
   | "Not a Match";
 
+/** Granular itemized score breakdown across weighted eligibility dimensions. */
+export interface ScoreDimension {
+  earned: number;
+  max: number;
+  label: string;
+}
+
+export interface ScoreBreakdown {
+  state: ScoreDimension;
+  occupation: ScoreDimension;
+  income: ScoreDimension;
+  businessType: ScoreDimension;
+  stage: ScoreDimension;
+  demographics: ScoreDimension;
+  total: { earned: number; max: number };
+}
+
 /** Result of the Scheme Matching Engine for a single scheme. */
 export interface ScoredSchemeResult {
   scheme: DemoScheme;
@@ -303,9 +363,11 @@ export interface ScoredSchemeResult {
   eligibilityStatus: SchemeEligibilityStatus;
   matchedCriteria: string[];
   unmatchedCriteria: string[];
+  unknownCriteria: string[];
   needsVerification: string[];
   positiveReasons: string[];
   verificationItems: string[];
+  scoreBreakdown: ScoreBreakdown;
   explanation: string;
 }
 

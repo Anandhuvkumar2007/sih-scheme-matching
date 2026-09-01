@@ -90,7 +90,6 @@ export async function askAssistant(
 
   const targetScheme = resolveScheme(query, context);
   const targetResult = findMatchingResult(targetScheme, context) || context?.results?.[0];
-  const hasApplicant = Boolean(context?.applicant);
   const hasResults = Boolean(context?.results && context.results.length > 0);
 
   // --------------------------------------------------------------------------
@@ -119,7 +118,7 @@ export async function askAssistant(
     q.includes("how was this picked")
   ) {
     if (targetResult) {
-      const { scheme, score, reasons, missingRequirements, eligibility } = targetResult;
+      const { scheme, score, missingRequirements, eligibility } = targetResult;
       const metRules = eligibility.filter((r) => r.met).map((r) => `• **${r.label}**${r.detail ? `: ${r.detail}` : ""}`);
       const unmetRules = eligibility.filter((r) => !r.met).map((r) => `• **${r.label}**${r.detail ? `: ${r.detail}` : ""}`);
 

@@ -211,6 +211,44 @@ export function SchemeGuidanceModal({ result, onClose }: Props) {
                 </ul>
               </div>
             </div>
+
+            {/* Granular Score Breakdown (100 Point Scale) */}
+            {result.scoreBreakdown && (
+              <div className="mt-4 rounded-xl border border-slate-200 bg-white p-3.5">
+                <div className="flex items-center justify-between text-xs font-bold text-slate-900 pb-2 border-b border-slate-100">
+                  <span>Compatibility Score Breakdown</span>
+                  <span className="text-brand-700 font-extrabold">
+                    Total: {result.scoreBreakdown.total.earned} / {result.scoreBreakdown.total.max} pts
+                  </span>
+                </div>
+                <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 text-xs">
+                  <div className="flex justify-between border-b border-slate-50 py-1">
+                    <span className="text-slate-500">State Scope:</span>
+                    <strong className="text-slate-900">{result.scoreBreakdown.state.earned} / {result.scoreBreakdown.state.max}</strong>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-50 py-1">
+                    <span className="text-slate-500">Occupation & Trade:</span>
+                    <strong className="text-slate-900">{result.scoreBreakdown.occupation.earned} / {result.scoreBreakdown.occupation.max}</strong>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-50 py-1">
+                    <span className="text-slate-500">Income & Limit:</span>
+                    <strong className="text-slate-900">{result.scoreBreakdown.income.earned} / {result.scoreBreakdown.income.max}</strong>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-50 py-1">
+                    <span className="text-slate-500">Enterprise Sector:</span>
+                    <strong className="text-slate-900">{result.scoreBreakdown.businessType.earned} / {result.scoreBreakdown.businessType.max}</strong>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-50 py-1">
+                    <span className="text-slate-500">Venture Stage:</span>
+                    <strong className="text-slate-900">{result.scoreBreakdown.stage.earned} / {result.scoreBreakdown.stage.max}</strong>
+                  </div>
+                  <div className="flex justify-between border-b border-slate-50 py-1">
+                    <span className="text-slate-500">Demographics:</span>
+                    <strong className="text-slate-900">{result.scoreBreakdown.demographics.earned} / {result.scoreBreakdown.demographics.max}</strong>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 2. Scheme Description & Overview */}

@@ -22,6 +22,7 @@ export function Footer() {
             {t("footerProduct")}
           </h3>
           <ul className="mt-3 space-y-2 text-sm">
+            <li><Link to="/recommender" className="hover:text-white">{t("navRecommender")}</Link></li>
             <li><Link to="/apply" className="hover:text-white">{t("navFindScheme")}</Link></li>
             <li><Link to="/#how-it-works" className="hover:text-white">{t("navHowItWorks")}</Link></li>
             <li><Link to="/#faq" className="hover:text-white">{t("navFaq")}</Link></li>

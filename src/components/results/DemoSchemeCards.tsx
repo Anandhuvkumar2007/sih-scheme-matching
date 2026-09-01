@@ -23,13 +23,17 @@ import {
   XCircle,
   ArrowRight,
   SearchX,
+  Scale,
+  X,
 } from "lucide-react";
 import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import { Ring } from "../ui/Ring";
 import { SchemeGuidanceModal } from "./SchemeGuidanceModal";
+import { SchemeComparisonModal } from "./SchemeComparisonModal";
 import { SchemeSearchFilterBar, type FilterState } from "./SchemeSearchFilterBar";
+import { RecommendationSummary } from "./RecommendationSummary";
 import { formatINR, formatPercent } from "../../utils/format";
 import type {
   SchemeRecommenderProfile,
@@ -119,9 +123,26 @@ export function DemoSchemeCards({ profile, results, onEdit, onReset }: Props) {
 
   const [modalResult, setModalResult] = useState<ScoredSchemeResult | null>(null);
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
+  const [selectedCompareIds, setSelectedCompareIds] = useState<string[]>([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [compareWarning, setCompareWarning] = useState<string | null>(null);
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  const toggleCompare = (id: string) => {
+    setCompareWarning(null);
+    setSelectedCompareIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((i) => i !== id);
+      }
+      if (prev.length >= 3) {
+        setCompareWarning("You can select up to 3 schemes to compare at a time. Deselect a scheme to add another.");
+        return prev;
+      }
+      return [...prev, id];
+    });
   };
 
   const handleFilterChange = <K extends keyof FilterState>(
@@ -357,26 +378,8 @@ export function DemoSchemeCards({ profile, results, onEdit, onReset }: Props) {
         </div>
       </Card>
 
-      {/* 2. MATCHING ENGINE OVERVIEW BANNER */}
-      <div className="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-indigo-50/70 p-5 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
-            <div>
-              <h3 className="text-base font-extrabold text-slate-900">
-                Scheme Matching & Eligibility Engine ({results.length} Schemes Evaluated)
-              </h3>
-              <p className="mt-0.5 text-xs text-slate-600">
-                Search, filter by sector/category, or sort to find targeted welfare opportunities with verified application guidance.
-              </p>
-            </div>
-          </div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-bold text-brand-800 shadow-sm border border-brand-200">
-            <Award className="h-3.5 w-3.5 text-brand-600" />
-            <span>Ranked by Eligibility & Score</span>
-          </div>
-        </div>
-      </div>
+      {/* 2. PERSONALIZED RECOMMENDATION SUMMARY */}
+      <RecommendationSummary profile={profile} results={results} />
 
       {/* 3. SEARCH, FILTER & SORT BAR */}
       <SchemeSearchFilterBar
@@ -393,7 +396,7 @@ export function DemoSchemeCards({ profile, results, onEdit, onReset }: Props) {
 
       {/* 4. RANKED SCHEMES CARDS LIST */}
       {filteredResults.length > 0 ? (
-        <div className="space-y-6">
+        <div id="ranked-schemes-list" className="space-y-6 scroll-mt-20">
           {filteredResults.map((result: ScoredSchemeResult, index: number) => {
             const {
               scheme,
@@ -463,8 +466,18 @@ export function DemoSchemeCards({ profile, results, onEdit, onReset }: Props) {
                       ) : null}
                     </div>
 
-                    {/* Visual Match Strength & Score Ring */}
+                    {/* Visual Match Strength, Score Ring & Compare Control */}
                     <div className="flex items-center gap-3">
+                      <label className="inline-flex items-center gap-1.5 cursor-pointer rounded-xl border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition shadow-2xs">
+                        <input
+                          type="checkbox"
+                          checked={selectedCompareIds.includes(scheme.id)}
+                          onChange={() => toggleCompare(scheme.id)}
+                          className="h-3.5 w-3.5 rounded text-brand-600 focus:ring-brand-500"
+                        />
+                        <span className="hidden sm:inline">Compare</span>
+                        <Scale className="h-3.5 w-3.5 text-brand-600 sm:hidden" />
+                      </label>
                       <div className="text-right">
                         <span className={`inline-block text-xs font-bold px-2.5 py-0.5 rounded-full border ${config.cardBorder} ${config.accentBg} ${config.textColor}`}>
                           {strength} — {score}%
@@ -501,6 +514,59 @@ export function DemoSchemeCards({ profile, results, onEdit, onReset }: Props) {
                     <p className="font-bold text-slate-900 mb-0.5">Eligibility Assessment:</p>
                     <p>{explanation}</p>
                   </div>
+
+                  {/* 100-Point Normalized Score Breakdown */}
+                  {result.scoreBreakdown && (
+                    <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                      <div className="flex items-center justify-between text-xs font-bold text-slate-800 pb-2 border-b border-slate-200/60">
+                        <span className="flex items-center gap-1.5">
+                          <Award className="h-3.5 w-3.5 text-brand-600" />
+                          Transparent Score Breakdown (Normalized 100 pts)
+                        </span>
+                        <span className="font-extrabold text-brand-700">
+                          {result.scoreBreakdown.total.earned} / {result.scoreBreakdown.total.max} pts
+                        </span>
+                      </div>
+                      <div className="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6 text-[11px]">
+                        <div className="rounded-lg bg-white p-2 border border-slate-100 shadow-xs">
+                          <p className="text-slate-400 font-medium truncate">State Scope</p>
+                          <p className="font-bold text-slate-900 mt-0.5">
+                            {result.scoreBreakdown.state.earned} / {result.scoreBreakdown.state.max}
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-white p-2 border border-slate-100 shadow-xs">
+                          <p className="text-slate-400 font-medium truncate">Occupation</p>
+                          <p className="font-bold text-slate-900 mt-0.5">
+                            {result.scoreBreakdown.occupation.earned} / {result.scoreBreakdown.occupation.max}
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-white p-2 border border-slate-100 shadow-xs">
+                          <p className="text-slate-400 font-medium truncate">Income & Limit</p>
+                          <p className="font-bold text-slate-900 mt-0.5">
+                            {result.scoreBreakdown.income.earned} / {result.scoreBreakdown.income.max}
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-white p-2 border border-slate-100 shadow-xs">
+                          <p className="text-slate-400 font-medium truncate">Sector</p>
+                          <p className="font-bold text-slate-900 mt-0.5">
+                            {result.scoreBreakdown.businessType.earned} / {result.scoreBreakdown.businessType.max}
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-white p-2 border border-slate-100 shadow-xs">
+                          <p className="text-slate-400 font-medium truncate">Venture Stage</p>
+                          <p className="font-bold text-slate-900 mt-0.5">
+                            {result.scoreBreakdown.stage.earned} / {result.scoreBreakdown.stage.max}
+                          </p>
+                        </div>
+                        <div className="rounded-lg bg-white p-2 border border-slate-100 shadow-xs">
+                          <p className="text-slate-400 font-medium truncate">Demographics</p>
+                          <p className="font-bold text-slate-900 mt-0.5">
+                            {result.scoreBreakdown.demographics.earned} / {result.scoreBreakdown.demographics.max}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* EXPLAINABILITY SECTION: "Why this scheme matches" vs "Things to verify" */}
                   <div className="mt-5 grid gap-4 md:grid-cols-2">
@@ -766,11 +832,84 @@ export function DemoSchemeCards({ profile, results, onEdit, onReset }: Props) {
         </div>
       </div>
 
-      {/* 6. DEDICATED SCHEME GUIDANCE MODAL */}
+      {/* 6. FLOATING COMPARISON BAR (Active when >= 1 scheme selected) */}
+      {selectedCompareIds.length > 0 && (
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-2xl animate-fade-up">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl border border-brand-300 bg-slate-900/95 text-white p-4 shadow-2xl backdrop-blur-md">
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white shadow-sm">
+                <Scale className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-xs font-bold text-white">
+                  {selectedCompareIds.length} of 3 Schemes Selected for Comparison
+                </p>
+                <p className="text-[11px] text-slate-300">
+                  Compare limits, interest rates, subsidies, and documents.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedCompareIds([])}
+                className="rounded-xl px-3 py-2 text-xs font-medium text-slate-300 hover:text-white transition"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsCompareModalOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-brand-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-brand-500 transition"
+              >
+                <span>Compare Selected ({selectedCompareIds.length})</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Comparison Limit Warning Notice */}
+      {compareWarning && (
+        <div
+          role="alert"
+          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-md rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900 shadow-lg flex items-center justify-between gap-2 animate-fade-in"
+        >
+          <span>{compareWarning}</span>
+          <button
+            type="button"
+            onClick={() => setCompareWarning(null)}
+            className="rounded p-1 text-amber-700 hover:bg-amber-100"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {/* 7. DEDICATED SCHEME GUIDANCE MODAL */}
       <SchemeGuidanceModal
         result={modalResult}
         onClose={() => setModalResult(null)}
       />
+
+      {/* 8. SCHEME COMPARISON MODAL */}
+      {isCompareModalOpen && (
+        <SchemeComparisonModal
+          selectedResults={results.filter((r) =>
+            selectedCompareIds.includes(r.scheme.id)
+          )}
+          onClose={() => setIsCompareModalOpen(false)}
+          onRemove={(id) =>
+            setSelectedCompareIds((prev) => prev.filter((i) => i !== id))
+          }
+          onOpenGuidance={(result) => {
+            setIsCompareModalOpen(false);
+            setModalResult(result);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -4,12 +4,9 @@
 // ============================================================================
 
 import {
-  checkEligibility,
-  calculateMatchScore,
   matchScheme,
   rankSchemes,
   recommend,
-  type ScoredScheme,
 } from "./recommendationEngine";
 import type { Applicant, Scheme } from "../types";
 
