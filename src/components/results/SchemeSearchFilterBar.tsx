@@ -56,12 +56,14 @@ export function SchemeSearchFilterBar({
             value={filters.searchQuery}
             onChange={(e) => onFilterChange("searchQuery", e.target.value)}
             placeholder="Search schemes by name, ministry, category, trade, or beneficiaries..."
+            aria-label="Search schemes"
             className="w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pl-10 pr-10 text-xs text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/20"
           />
           {filters.searchQuery && (
             <button
               type="button"
               onClick={() => onFilterChange("searchQuery", "")}
+              aria-label="Clear search input"
               className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 hover:text-slate-600"
             >
               <X className="h-3.5 w-3.5" />
@@ -71,11 +73,12 @@ export function SchemeSearchFilterBar({
 
         {/* Sort Dropdown */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
+          <label htmlFor="scheme-sort-select" className="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
             <ArrowUpDown className="h-3.5 w-3.5" />
             <span>Sort:</span>
-          </div>
+          </label>
           <select
+            id="scheme-sort-select"
             value={filters.sortBy}
             onChange={(e) =>
               onFilterChange(
@@ -96,10 +99,11 @@ export function SchemeSearchFilterBar({
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6 pt-1">
         {/* Filter 1: State */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <label htmlFor="filter-state-select" className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             State Scope
           </label>
           <select
+            id="filter-state-select"
             value={filters.selectedState}
             onChange={(e) => onFilterChange("selectedState", e.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-2.5 py-1.5 text-xs text-slate-700 focus:border-brand-500 focus:bg-white focus:outline-none"
@@ -115,10 +119,11 @@ export function SchemeSearchFilterBar({
 
         {/* Filter 2: Scheme Category */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <label htmlFor="filter-category-select" className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Category
           </label>
           <select
+            id="filter-category-select"
             value={filters.selectedCategory}
             onChange={(e) => onFilterChange("selectedCategory", e.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-2.5 py-1.5 text-xs text-slate-700 focus:border-brand-500 focus:bg-white focus:outline-none"
@@ -134,10 +139,11 @@ export function SchemeSearchFilterBar({
 
         {/* Filter 3: Occupation */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <label htmlFor="filter-occupation-select" className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Occupation
           </label>
           <select
+            id="filter-occupation-select"
             value={filters.selectedOccupation}
             onChange={(e) => onFilterChange("selectedOccupation", e.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-2.5 py-1.5 text-xs text-slate-700 focus:border-brand-500 focus:bg-white focus:outline-none"
@@ -153,10 +159,11 @@ export function SchemeSearchFilterBar({
 
         {/* Filter 4: Business Stage */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <label htmlFor="filter-stage-select" className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Stage
           </label>
           <select
+            id="filter-stage-select"
             value={filters.selectedBusinessStage}
             onChange={(e) => onFilterChange("selectedBusinessStage", e.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-2.5 py-1.5 text-xs text-slate-700 focus:border-brand-500 focus:bg-white focus:outline-none"
@@ -169,10 +176,11 @@ export function SchemeSearchFilterBar({
 
         {/* Filter 5: Assistance Type */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <label htmlFor="filter-assistance-select" className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Assistance Type
           </label>
           <select
+            id="filter-assistance-select"
             value={filters.selectedAssistanceType}
             onChange={(e) => onFilterChange("selectedAssistanceType", e.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-2.5 py-1.5 text-xs text-slate-700 focus:border-brand-500 focus:bg-white focus:outline-none"
@@ -188,10 +196,11 @@ export function SchemeSearchFilterBar({
 
         {/* Filter 6: Match Strength */}
         <div>
-          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <label htmlFor="filter-strength-select" className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Match Strength
           </label>
           <select
+            id="filter-strength-select"
             value={filters.selectedStrength}
             onChange={(e) => onFilterChange("selectedStrength", e.target.value)}
             className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-2.5 py-1.5 text-xs text-slate-700 focus:border-brand-500 focus:bg-white focus:outline-none"

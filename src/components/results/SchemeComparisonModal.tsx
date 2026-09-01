@@ -88,7 +88,11 @@ export function SchemeComparisonModal({
         </div>
 
         {/* Scrollable Comparison Grid Table */}
-        <div className="overflow-x-auto overflow-y-auto p-5 sm:p-6">
+        <div
+          tabIndex={0}
+          aria-label="Scheme comparison table, scroll horizontally for more schemes"
+          className="overflow-x-auto overflow-y-auto p-5 sm:p-6 focus:outline-none focus:ring-1 focus:ring-brand-500/30"
+        >
           <div
             className="grid min-w-[720px] gap-4"
             style={{

@@ -473,6 +473,7 @@ export function DemoSchemeCards({ profile, results, onEdit, onReset }: Props) {
                           type="checkbox"
                           checked={selectedCompareIds.includes(scheme.id)}
                           onChange={() => toggleCompare(scheme.id)}
+                          aria-label={`Select ${scheme.name} for comparison`}
                           className="h-3.5 w-3.5 rounded text-brand-600 focus:ring-brand-500"
                         />
                         <span className="hidden sm:inline">Compare</span>
@@ -840,7 +841,7 @@ export function DemoSchemeCards({ profile, results, onEdit, onReset }: Props) {
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-white shadow-sm">
                 <Scale className="h-5 w-5" />
               </span>
-              <div>
+              <div aria-live="polite">
                 <p className="text-xs font-bold text-white">
                   {selectedCompareIds.length} of 3 Schemes Selected for Comparison
                 </p>
