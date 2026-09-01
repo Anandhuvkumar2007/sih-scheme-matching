@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { MessageCircle, X, Send, Sparkles } from "lucide-react";
 import { useI18n } from "../../i18n";
 import { useApplicant } from "../../context/ApplicantContext";
-import { getReply, QUICK_REPLIES, type AssistantReply } from "../../services/chatbot";
+import { QUICK_REPLIES, type AssistantReply } from "../../services/chatbot";
+import { askAssistant } from "../../services/aiService";
 
 interface ChatMessage {
   role: "user" | "bot";
@@ -30,7 +31,7 @@ function BotText({ text }: { text: string }) {
 }
 
 export function Chatbot() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { state } = useApplicant();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -38,26 +39,35 @@ export function Chatbot() {
   const [typing, setTyping] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const bestScheme = state.results?.[0]?.scheme.name;
-
   // Auto-scroll to the newest message.
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, typing, open]);
 
-  const send = (raw: string) => {
+  const send = async (raw: string) => {
     const text = raw.trim();
     if (!text || typing) return;
     setMessages((m) => [...m, { role: "user", text }]);
     setInput("");
     setTyping(true);
 
-    // Small delay to feel like a real assistant (no network involved).
-    window.setTimeout(() => {
-      const reply = getReply(text, { bestScheme, hasResult: Boolean(state.results?.length) });
-      setMessages((m) => [...m, { role: "bot", text: reply.text, action: reply.action }]);
-      setTyping(false);
-    }, 450);
+    const activeScheme = state.results?.[0]?.scheme || null;
+
+    const response = await askAssistant({
+      query: text,
+      context: {
+        applicant: state.applicant,
+        activeScheme,
+        results: state.results,
+        language: lang,
+      },
+    });
+
+    setMessages((m) => [
+      ...m,
+      { role: "bot", text: response.text, action: response.action },
+    ]);
+    setTyping(false);
   };
 
   return (

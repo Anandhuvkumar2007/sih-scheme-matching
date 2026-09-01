@@ -7,6 +7,7 @@ import { LanguageSelector } from "./LanguageSelector";
 import { Button } from "../ui/Button";
 
 const NAV = [
+  { to: "/recommender", key: "navRecommender" as const },
   { to: "/apply", key: "navFindScheme" as const },
   { to: "/#how-it-works", key: "navHowItWorks" as const },
   { to: "/#faq", key: "navFaq" as const },

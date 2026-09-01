@@ -6,6 +6,7 @@ import { Chatbot } from "./components/chat/Chatbot";
 import { Landing } from "./pages/Landing";
 import { Apply } from "./pages/Apply";
 import { Results } from "./pages/Results";
+import { SchemeRecommender } from "./pages/SchemeRecommender";
 
 /** Scroll to top on route change (skip it for in-page anchors). */
 function ScrollToTop() {
@@ -25,6 +26,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/apply" element={<Apply />} />
+          <Route path="/recommender" element={<SchemeRecommender />} />
           <Route path="/results" element={<Results />} />
           <Route path="*" element={<Landing />} />
         </Routes>

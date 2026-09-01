@@ -8,6 +8,7 @@ export const en = {
   // Navbar / brand
   brand: "SchemeSaathi",
   navFindScheme: "Find My Scheme",
+  navRecommender: "Scheme Recommender",
   navHowItWorks: "How It Works",
   navFaq: "FAQ",
   navViewResults: "View Results",
@@ -198,6 +199,33 @@ export const en = {
   chatClose: "Close assistant",
   chatDisclosure:
     "This is a demo assistant. It is rule-based, not an AI model, and no personal data is stored or sent anywhere.",
+
+  // Scheme Recommender
+  recommenderHeading: "Scheme Recommender Questionnaire",
+  recommenderSubheading: "A tailored questionnaire for marginalized entrepreneurs to capture your demographics, business profile, and credit needs.",
+  recommenderResultsHeading: "Recommended Welfare Credit Schemes",
+  recommenderResultsSubheading: "Schemes evaluated and ranked by the Scheme Matching & Eligibility Engine.",
+  qAgeLabel: "Age (Years)",
+  qStateLabel: "State / Union Territory",
+  qGenderLabel: "Gender",
+  qCategoryLabel: "Social Category",
+  qOccupationLabel: "Primary Occupation / Trade",
+  qBusinessTypeLabel: "Enterprise Sector / Business Type",
+  qBusinessStageLabel: "Venture Stage",
+  qIncomeLabel: "Annual Family Income (₹)",
+  qDisabilityLabel: "Disability Status (Divyangjan)",
+  qAssistanceLabel: "Required Financial Assistance (₹)",
+  btnFindSchemes: "Find Matching Schemes",
+  btnEditForm: "Edit Questionnaire",
+  btnResetForm: "Reset",
+  btnViewDetails: "View Details & Application Guide",
+  btnApplyOfficial: "Apply on Official Portal",
+  eligibilityEligible: "Eligible Based on Provided Info",
+  eligibilityPotential: "Potential Match",
+  eligibilityNeedsVerification: "Needs Verification",
+  eligibilityNotAMatch: "Not a Match",
+  whyMatches: "Why this scheme matches",
+  thingsToVerify: "Things to verify",
 };
 
 export type Messages = typeof en;

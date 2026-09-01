@@ -30,6 +30,9 @@ export type PartnerType =
   | "Regional Rural Bank"
   | "NBFC-MFI";
 
+/** Eligibility and recommendation status for an evaluated scheme. */
+export type MatchStatus = "eligible" | "potentially-eligible" | "ineligible";
+
 /** A single explainable rule used to score a scheme against an applicant. */
 export interface EligibilityRule {
   /** Human-readable description of the rule. */
@@ -44,12 +47,51 @@ export interface EligibilityRule {
   detail?: string;
 }
 
-/** A welfare credit scheme offered on the platform. */
+/**
+ * A welfare credit or government scheme offered on the platform.
+ * Contains both rich structured fields for the matching engine/database
+ * and legacy properties for backwards compatibility with existing UI.
+ */
 export interface Scheme {
   id: string;
+  /** Scheme title / display name. */
   name: string;
+  /** Alias for scheme title. */
+  schemeName?: string;
+  /** Sponsoring Ministry, Department, or Government Corporation. */
+  ministry?: string;
+  /** Category of the scheme. */
   category: ProjectCategory;
+  /** Full description of the scheme's purpose. */
   description: string;
+  /** Target demographic/beneficiaries (e.g. "SC Entrepreneurs", "Women Artisans"). */
+  targetBeneficiaries?: string[];
+  /** State applicability: list of states or "All India". */
+  stateApplicability?: string[] | "All India";
+  /** Structured age limits. */
+  ageCriteria?: AgeCriteria;
+  /** Structured income limits. */
+  incomeCriteria?: IncomeCriteria;
+  /** Applicable business stages (ideation, startup, expansion, etc.). */
+  businessStage?: BusinessStage[] | "any";
+  /** Structured financial benefits and terms. */
+  benefits?: SchemeBenefits;
+  /** Required documents for applying. */
+  requiredDocuments?: string[];
+  /** Official government portal URL. */
+  officialWebsite?: string;
+  /** Direct link to application form or portal. */
+  applicationUrl?: string;
+  /** Declarative rules for the deterministic matching engine. */
+  eligibilityCriteria?: SchemeEligibilityCriteria;
+
+  // --- Data Safety & Transparency Flags ---
+  /** Flag identifying demo/sample data vs official government records. */
+  isDemo?: boolean;
+  /** Explicit verification status notice or disclaimer. */
+  dataNotice?: string;
+
+  // --- Properties for existing UI, services, and recommendation engine ---
   /** The supported business/project types (EN label list). */
   supportedBusinessTypes: string[];
   /** Maximum annual family income allowed (₹). 0 = no cap. */
@@ -67,11 +109,11 @@ export interface Scheme {
   maxTenureMonths: number;
   /** Whether an own contribution (down payment) is required and its %. */
   marginContributionPct: number;
-  /** Optional age eligibility, e.g. { min: 18, max: nil }. */
+  /** Optional age eligibility, e.g. { min: 18, max: 65 }. */
   age?: { min?: number; max?: number };
   /** Business experience (years) required, if any. */
   minBusinessExperience?: number;
-  /** List of categories that typically match this scheme. */
+  /** List of search tags that typically match this scheme. */
   tags: string[];
   /** Documents required to apply. */
   documents: string[];
@@ -170,6 +212,101 @@ export interface DemoProfile {
 export interface FaqItem {
   question: string;
   answer: string;
+}
+
+/** Questionnaire data collected from a marginalized entrepreneur. */
+export interface SchemeRecommenderProfile {
+  age: number;
+  state: string;
+  gender: "Male" | "Female" | "Transgender" | "Prefer not to say" | "";
+  socialCategory:
+    | "Scheduled Caste (SC)"
+    | "Scheduled Tribe (ST)"
+    | "Other Backward Class (OBC)"
+    | "Economically Weaker Section (EWS)"
+    | "General / Other"
+    | "";
+  occupation: string;
+  businessType: string;
+  businessStage: "Idea / New Venture" | "Existing Business" | "";
+  annualIncome: number;
+  disabilityStatus:
+    | "None / Not Applicable"
+    | "Locomotor Disability"
+    | "Visual Impairment"
+    | "Hearing Impairment"
+    | "Other"
+    | "";
+  requiredFinancialAssistance: number;
+}
+
+export type RecommendationStrength =
+  | "Strong Match"
+  | "Good Match"
+  | "Potential Match"
+  | "Low Match";
+
+/** A welfare scheme with structured eligibility criteria and verified metadata. */
+export interface DemoScheme {
+  id: string;
+  name: string;
+  agency: string;
+  ministry?: string;
+  category: string;
+  financialAssistanceType?:
+    | "Term Loan"
+    | "Composite Loan"
+    | "Credit-Linked Capital Subsidy"
+    | "Micro-Credit / SHG Loan"
+    | "Cluster Grant & Modernization"
+    | "Collateral-Free Credit Guarantee";
+  targetBeneficiaries: string[];
+  maxAssistance: number;
+  minAssistance?: number;
+  interestRate: number;
+  subsidyPct?: number;
+  moratoriumMonths: number;
+  maxTenureMonths: number;
+  description: string;
+  keyBenefits: string[];
+  requiredDocuments: string[];
+  badgeColor: string;
+  // Structured criteria for deterministic matching
+  eligibleSocialCategories: string[];
+  eligibleGenders: string[];
+  eligibleStates: string[];
+  eligibleOccupations: string[];
+  eligibleBusinessTypes: string[];
+  eligibleBusinessStages: ("Idea / New Venture" | "Existing Business")[];
+  incomeCeiling: number; // 0 means no ceiling
+  minAge?: number;
+  maxAge?: number;
+  disabilityFriendly?: boolean;
+  // Verification and application metadata
+  applicationProcess?: string[];
+  officialUrl?: string;
+  sourceInfo?: string;
+  isVerified?: boolean;
+}
+
+export type SchemeEligibilityStatus =
+  | "Eligible Based on Provided Information"
+  | "Potential Match"
+  | "Needs Verification"
+  | "Not a Match";
+
+/** Result of the Scheme Matching Engine for a single scheme. */
+export interface ScoredSchemeResult {
+  scheme: DemoScheme;
+  score: number;
+  strength: RecommendationStrength;
+  eligibilityStatus: SchemeEligibilityStatus;
+  matchedCriteria: string[];
+  unmatchedCriteria: string[];
+  needsVerification: string[];
+  positiveReasons: string[];
+  verificationItems: string[];
+  explanation: string;
 }
 
 /** A toast notification shown to the user. */
