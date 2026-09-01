@@ -30,6 +30,59 @@ export type PartnerType =
   | "Regional Rural Bank"
   | "NBFC-MFI";
 
+/** Business stage applicability for a scheme. */
+export type BusinessStage = "ideation" | "startup" | "expansion" | "any";
+
+/** Gender eligibility restriction. */
+export type GenderEligibility = "all" | "female" | "transgender" | "male";
+
+/** Structured Age Criteria. */
+export interface AgeCriteria {
+  min?: number;
+  max?: number;
+}
+
+/** Structured Income Criteria. */
+export interface IncomeCriteria {
+  /** Maximum annual income permitted in ₹. 0 = no income ceiling. */
+  maxAnnualIncome: number;
+  /** Whether the income ceiling applies to total family income. */
+  isFamilyIncome?: boolean;
+  /** Human-readable explanation of income rules. */
+  description?: string;
+}
+
+/** Detailed structured financial benefits provided by a scheme. */
+export interface SchemeBenefits {
+  loanMin: number;
+  loanMax: number;
+  interestRate: number;
+  moratoriumMonths: number;
+  maxTenureMonths: number;
+  marginContributionPct: number;
+  /** Subsidy or capital grant percentage, if applicable. */
+  subsidyPct?: number;
+  /** Subsidy maximum ceiling in ₹. */
+  maxSubsidyAmount?: number;
+  /** Description of additional financial benefits or interest subventions. */
+  description?: string;
+}
+
+/** Deterministic rule criteria used by the recommendation/matching engine. */
+export interface SchemeEligibilityCriteria {
+  minEducation?: EducationLevel;
+  incomeLimit?: number;
+  age?: AgeCriteria;
+  gender?: GenderEligibility[];
+  socialCategories?: string[];
+  eligibleStates?: string[];
+  eligibleOccupations?: string[];
+  businessStages?: BusinessStage[];
+  disabilityEligibleOnly?: boolean;
+  minBusinessExperienceYears?: number;
+  specialConditions?: string[];
+}
+
 /** A single explainable rule used to score a scheme against an applicant. */
 export interface EligibilityRule {
   /** Human-readable description of the rule. */
@@ -44,12 +97,51 @@ export interface EligibilityRule {
   detail?: string;
 }
 
-/** A welfare credit scheme offered on the platform. */
+/**
+ * A welfare credit or government scheme offered on the platform.
+ * Contains both rich structured fields for the matching engine/database
+ * and legacy properties for backwards compatibility with existing UI.
+ */
 export interface Scheme {
   id: string;
+  /** Scheme title / display name. */
   name: string;
+  /** Alias for scheme title. */
+  schemeName?: string;
+  /** Sponsoring Ministry, Department, or Government Corporation. */
+  ministry?: string;
+  /** Category of the scheme. */
   category: ProjectCategory;
+  /** Full description of the scheme's purpose. */
   description: string;
+  /** Target demographic/beneficiaries (e.g. "SC Entrepreneurs", "Women Artisans"). */
+  targetBeneficiaries?: string[];
+  /** State applicability: list of states or "All India". */
+  stateApplicability?: string[] | "All India";
+  /** Structured age limits. */
+  ageCriteria?: AgeCriteria;
+  /** Structured income limits. */
+  incomeCriteria?: IncomeCriteria;
+  /** Applicable business stages (ideation, startup, expansion, etc.). */
+  businessStage?: BusinessStage[] | "any";
+  /** Structured financial benefits and terms. */
+  benefits?: SchemeBenefits;
+  /** Required documents for applying. */
+  requiredDocuments?: string[];
+  /** Official government portal URL. */
+  officialWebsite?: string;
+  /** Direct link to application form or portal. */
+  applicationUrl?: string;
+  /** Declarative rules for the deterministic matching engine. */
+  eligibilityCriteria?: SchemeEligibilityCriteria;
+
+  // --- Data Safety & Transparency Flags ---
+  /** Flag identifying demo/sample data vs official government records. */
+  isDemo?: boolean;
+  /** Explicit verification status notice or disclaimer. */
+  dataNotice?: string;
+
+  // --- Properties for existing UI, services, and recommendation engine ---
   /** The supported business/project types (EN label list). */
   supportedBusinessTypes: string[];
   /** Maximum annual family income allowed (₹). 0 = no cap. */
@@ -67,11 +159,11 @@ export interface Scheme {
   maxTenureMonths: number;
   /** Whether an own contribution (down payment) is required and its %. */
   marginContributionPct: number;
-  /** Optional age eligibility, e.g. { min: 18, max: nil }. */
+  /** Optional age eligibility, e.g. { min: 18, max: 65 }. */
   age?: { min?: number; max?: number };
   /** Business experience (years) required, if any. */
   minBusinessExperience?: number;
-  /** List of categories that typically match this scheme. */
+  /** List of search tags that typically match this scheme. */
   tags: string[];
   /** Documents required to apply. */
   documents: string[];
