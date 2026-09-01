@@ -8,6 +8,7 @@ import type { Messages } from "./en";
 export const hi: Partial<Messages> = {
   brand: "स्कीम साथी",
   navFindScheme: "मेरी स्कीम खोजें",
+  navRecommender: "स्कीम अनुशंसा (प्रश्नावली)",
   navHowItWorks: "यह कैसे काम करता है",
   navFaq: "प्रश्न",
   navViewResults: "परिणाम देखें",
@@ -72,9 +73,6 @@ export const hi: Partial<Messages> = {
   emiTotalInterest: "कुल ब्याज",
   applyNow: "अपने निकटतम पात्र पार्टनर पर आवेदन करें",
   nextStep: "स्पष्ट अगला कदम",
-  backHome: "होम पर वापस",
-  startOver: "फिर से शुरू करें",
-  footerTag: "हाशिए के उद्यमियों को सही ऋण तक स्पष्ट रूप से पहुँचाना।",
   disclaimer:
     "इस प्रोटोटाइप में दिखाई गई स्कीम पात्रता डेमो नियमों और नमूना डेटा पर आधारित है। अंतिम पात्रता संबंधित प्राधिकरण/चैनल पार्टनर द्वारा निर्धारित की जाती है।",
 
@@ -82,6 +80,35 @@ export const hi: Partial<Messages> = {
   chatTitle: "स्कीम साथी सहायक",
   chatSubtitle: "डेमो सहायक · नियम-आधारित, AI नहीं",
   chatPlaceholder: "एक प्रश्न पूछें…",
+  chatSend: "भेजें",
+  chatClose: "सहायक बंद करें",
   chatDisclosure:
     "यह एक डेमो सहायक है। यह AI मॉडल नहीं है, नियम-आधारित है। कोई डेटा संग्रहीत या भेजा नहीं जाता।",
+
+  // Scheme Recommender
+  recommenderHeading: "स्कीम अनुशंसा प्रश्नावली",
+  recommenderSubheading: "हाशिए के उद्यमियों के लिए उनकी जनसांख्यिकी, व्यवसाय प्रोफाइल और ऋण आवश्यकताओं को दर्ज करने के लिए एक अनुकूलित प्रश्नावली।",
+  recommenderResultsHeading: "अनुशंसित कल्याणकारी ऋण स्कीमें",
+  recommenderResultsSubheading: "स्कीम मिलान एवं पात्रता इंजन द्वारा मूल्यांकित और रैंक की गई स्कीमें।",
+  qAgeLabel: "आयु (वर्ष)",
+  qStateLabel: "राज्य / केंद्र शासित प्रदेश",
+  qGenderLabel: "लिंग",
+  qCategoryLabel: "सामाजिक श्रेणी",
+  qOccupationLabel: "मुख्य व्यवसाय / कार्य",
+  qBusinessTypeLabel: "उद्यम क्षेत्र / व्यवसाय प्रकार",
+  qBusinessStageLabel: "उद्यम चरण",
+  qIncomeLabel: "वार्षिक पारिवारिक आय (₹)",
+  qDisabilityLabel: "दिव्यांगजन स्थिति",
+  qAssistanceLabel: "आवश्यक वित्तीय सहायता (₹)",
+  btnFindSchemes: "मिलान स्कीमें खोजें",
+  btnEditForm: "प्रश्नावली संपादित करें",
+  btnResetForm: "रीसेट करें",
+  btnViewDetails: "विवरण और आवेदन गाइड देखें",
+  btnApplyOfficial: "आधिकारिक पोर्टल पर आवेदन करें",
+  eligibilityEligible: "दी गई जानकारी के आधार पर पात्र",
+  eligibilityPotential: "संभावित मिलान",
+  eligibilityNeedsVerification: "सत्यापन आवश्यक",
+  eligibilityNotAMatch: "पात्र नहीं",
+  whyMatches: "यह स्कीम क्यों मेल खाती है",
+  thingsToVerify: "सत्यापन योग्य बातें",
 };

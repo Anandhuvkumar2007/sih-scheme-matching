@@ -8,6 +8,7 @@ import type { Messages } from "./en";
 export const ml: Partial<Messages> = {
   brand: "സ്കീം സാഥി",
   navFindScheme: "എന്റെ സ്കീം കണ്ടെത്തുക",
+  navRecommender: "സ്കീം ശുപാർശ (ചോദ്യാവലി)",
   navHowItWorks: "ഇത് എങ്ങനെ പ്രവർത്തിക്കുന്നു",
   navFaq: "ചോദ്യങ്ങൾ",
   navViewResults: "ഫലങ്ങൾ കാണുക",
@@ -72,9 +73,6 @@ export const ml: Partial<Messages> = {
   emiTotalInterest: "മൊത്തം പലിശ",
   applyNow: "ഏറ്റവും അടുത്ത യോഗ്യരായ പങ്കാളിയിൽ അപേക്ഷിക്കുക",
   nextStep: "വ്യക്തമായ അടുത്ത ഘട്ടം",
-  backHome: "ഹോമിലേക്ക് മടങ്ങുക",
-  startOver: "വീണ്ടും തുടങ്ങുക",
-  footerTag: "അരികിലായ സംരംഭകരെ ശരിയായ വായ്പയിലേക്ക് എത്തിക്കാൻ.",
   disclaimer:
     "ഈ പ്രോട്ടോടൈപ്പിലെ സ്കീം യോഗ്യത ഡെമോൺസ്ട്രേഷൻ നിയമങ്ങളെയും സാമ്പിൾ ഡാറ്റയെയും അടിസ്ഥാനമാക്കിയുള്ളതാണ്. അന്തിമ യോഗ്യത ബന്ധപ്പെട്ട അതോറിറ്റി/ചാനൽ പങ്കാളി നിർണ്ണയിക്കുന്നു.",
 
@@ -82,6 +80,35 @@ export const ml: Partial<Messages> = {
   chatTitle: "സ്കീം സാഥി അസിസ്റ്റന്റ്",
   chatSubtitle: "ഡെമോ അസിസ്റ്റന്റ് · നിയമാധിഷ്ഠിതം, AI അല്ല",
   chatPlaceholder: "ഒരു ചോദ്യം ചോദിക്കൂ…",
+  chatSend: "അയക്കുക",
+  chatClose: "അസിസ്റ്റന്റ് അടയ്ക്കുക",
   chatDisclosure:
     "ഇതൊരു ഡെമോ അസിസ്റ്റന്റാണ്. ഇത് AI മോഡലല്ല, നിയമാധിഷ്ഠിതമാണ്. ഒരു വ്യക്തിഗത ഡാറ്റയും സംഭരിക്കുകയോ അയയ്ക്കുകയോ ചെയ്യുന്നില്ല.",
+
+  // Scheme Recommender
+  recommenderHeading: "സ്കീം ശുപാർശ ചോദ്യാവലി",
+  recommenderSubheading: "അരികിലായ സംരംഭകർക്ക് അവരുടെ ജനസംഖ്യാ വിവരങ്ങളും ബിസിനസ് പ്രൊഫൈലും വായ്പാ ആവശ്യങ്ങളും രേഖപ്പെടുത്താനുള്ള ചോദ്യാവലി.",
+  recommenderResultsHeading: "ശുപാർശ ചെയ്ത ക്ഷേമ വായ്പാ സ്കീമുകൾ",
+  recommenderResultsSubheading: "സ്കീം മാച്ചിംഗ് & യോഗ്യതാ എഞ്ചിൻ വഴി വിലയിരുത്തി റാങ്ക് ചെയ്ത സ്കീമുകൾ.",
+  qAgeLabel: "പ്രായം (വർഷം)",
+  qStateLabel: "സംസ്ഥാനം / കേന്ദ്രഭരണ പ്രദേശം",
+  qGenderLabel: "ലിംഗഭേദം",
+  qCategoryLabel: "സാമൂഹിക വിഭാഗം",
+  qOccupationLabel: "പ്രധാന തൊഴിൽ",
+  qBusinessTypeLabel: "സംരംഭ മേഖല / ബിസിനസ് തരം",
+  qBusinessStageLabel: "സംരംഭ ഘട്ടം",
+  qIncomeLabel: "വാർഷിക കുടുംബ വരുമാനം (₹)",
+  qDisabilityLabel: "ഭിന്നശേഷി നില (ദിവ്യാംഗ്ജൻ)",
+  qAssistanceLabel: "ആവശ്യമായ സാമ്പത്തിക സഹായം (₹)",
+  btnFindSchemes: "പൊരുത്തപ്പെടുന്ന സ്കീമുകൾ കണ്ടെത്തുക",
+  btnEditForm: "ചോദ്യാവലി തിരുത്തുക",
+  btnResetForm: "റീസെറ്റ് ചെയ്യുക",
+  btnViewDetails: "വിശദാംശങ്ങളും അപേക്ഷാ വഴികാട്ടിയും കാണുക",
+  btnApplyOfficial: "ഔദ്യോഗിക പോർട്ടലിൽ അപേക്ഷിക്കുക",
+  eligibilityEligible: "നൽകിയ വിവരങ്ങളുടെ അടിസ്ഥാനത്തിൽ യോഗ്യൻ",
+  eligibilityPotential: "സാധ്യതയുള്ള പൊരുത്തം",
+  eligibilityNeedsVerification: "സ്ഥിരീകരണം ആവശ്യമാണ്",
+  eligibilityNotAMatch: "യോജിച്ചതല്ല",
+  whyMatches: "എന്തുകൊണ്ട് ഈ സ്കീം യോജിക്കുന്നു",
+  thingsToVerify: "സ്ഥിരീകരിക്കേണ്ട കാര്യങ്ങൾ",
 };

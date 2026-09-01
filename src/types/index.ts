@@ -214,6 +214,101 @@ export interface FaqItem {
   answer: string;
 }
 
+/** Questionnaire data collected from a marginalized entrepreneur. */
+export interface SchemeRecommenderProfile {
+  age: number;
+  state: string;
+  gender: "Male" | "Female" | "Transgender" | "Prefer not to say" | "";
+  socialCategory:
+    | "Scheduled Caste (SC)"
+    | "Scheduled Tribe (ST)"
+    | "Other Backward Class (OBC)"
+    | "Economically Weaker Section (EWS)"
+    | "General / Other"
+    | "";
+  occupation: string;
+  businessType: string;
+  businessStage: "Idea / New Venture" | "Existing Business" | "";
+  annualIncome: number;
+  disabilityStatus:
+    | "None / Not Applicable"
+    | "Locomotor Disability"
+    | "Visual Impairment"
+    | "Hearing Impairment"
+    | "Other"
+    | "";
+  requiredFinancialAssistance: number;
+}
+
+export type RecommendationStrength =
+  | "Strong Match"
+  | "Good Match"
+  | "Potential Match"
+  | "Low Match";
+
+/** A welfare scheme with structured eligibility criteria and verified metadata. */
+export interface DemoScheme {
+  id: string;
+  name: string;
+  agency: string;
+  ministry?: string;
+  category: string;
+  financialAssistanceType?:
+    | "Term Loan"
+    | "Composite Loan"
+    | "Credit-Linked Capital Subsidy"
+    | "Micro-Credit / SHG Loan"
+    | "Cluster Grant & Modernization"
+    | "Collateral-Free Credit Guarantee";
+  targetBeneficiaries: string[];
+  maxAssistance: number;
+  minAssistance?: number;
+  interestRate: number;
+  subsidyPct?: number;
+  moratoriumMonths: number;
+  maxTenureMonths: number;
+  description: string;
+  keyBenefits: string[];
+  requiredDocuments: string[];
+  badgeColor: string;
+  // Structured criteria for deterministic matching
+  eligibleSocialCategories: string[];
+  eligibleGenders: string[];
+  eligibleStates: string[];
+  eligibleOccupations: string[];
+  eligibleBusinessTypes: string[];
+  eligibleBusinessStages: ("Idea / New Venture" | "Existing Business")[];
+  incomeCeiling: number; // 0 means no ceiling
+  minAge?: number;
+  maxAge?: number;
+  disabilityFriendly?: boolean;
+  // Verification and application metadata
+  applicationProcess?: string[];
+  officialUrl?: string;
+  sourceInfo?: string;
+  isVerified?: boolean;
+}
+
+export type SchemeEligibilityStatus =
+  | "Eligible Based on Provided Information"
+  | "Potential Match"
+  | "Needs Verification"
+  | "Not a Match";
+
+/** Result of the Scheme Matching Engine for a single scheme. */
+export interface ScoredSchemeResult {
+  scheme: DemoScheme;
+  score: number;
+  strength: RecommendationStrength;
+  eligibilityStatus: SchemeEligibilityStatus;
+  matchedCriteria: string[];
+  unmatchedCriteria: string[];
+  needsVerification: string[];
+  positiveReasons: string[];
+  verificationItems: string[];
+  explanation: string;
+}
+
 /** A toast notification shown to the user. */
 export interface ToastMessage {
   id: string;
