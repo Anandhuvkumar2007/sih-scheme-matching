@@ -30,58 +30,8 @@ export type PartnerType =
   | "Regional Rural Bank"
   | "NBFC-MFI";
 
-/** Business stage applicability for a scheme. */
-export type BusinessStage = "ideation" | "startup" | "expansion" | "any";
-
-/** Gender eligibility restriction. */
-export type GenderEligibility = "all" | "female" | "transgender" | "male";
-
-/** Structured Age Criteria. */
-export interface AgeCriteria {
-  min?: number;
-  max?: number;
-}
-
-/** Structured Income Criteria. */
-export interface IncomeCriteria {
-  /** Maximum annual income permitted in ₹. 0 = no income ceiling. */
-  maxAnnualIncome: number;
-  /** Whether the income ceiling applies to total family income. */
-  isFamilyIncome?: boolean;
-  /** Human-readable explanation of income rules. */
-  description?: string;
-}
-
-/** Detailed structured financial benefits provided by a scheme. */
-export interface SchemeBenefits {
-  loanMin: number;
-  loanMax: number;
-  interestRate: number;
-  moratoriumMonths: number;
-  maxTenureMonths: number;
-  marginContributionPct: number;
-  /** Subsidy or capital grant percentage, if applicable. */
-  subsidyPct?: number;
-  /** Subsidy maximum ceiling in ₹. */
-  maxSubsidyAmount?: number;
-  /** Description of additional financial benefits or interest subventions. */
-  description?: string;
-}
-
-/** Deterministic rule criteria used by the recommendation/matching engine. */
-export interface SchemeEligibilityCriteria {
-  minEducation?: EducationLevel;
-  incomeLimit?: number;
-  age?: AgeCriteria;
-  gender?: GenderEligibility[];
-  socialCategories?: string[];
-  eligibleStates?: string[];
-  eligibleOccupations?: string[];
-  businessStages?: BusinessStage[];
-  disabilityEligibleOnly?: boolean;
-  minBusinessExperienceYears?: number;
-  specialConditions?: string[];
-}
+/** Eligibility and recommendation status for an evaluated scheme. */
+export type MatchStatus = "eligible" | "potentially-eligible" | "ineligible";
 
 /** A single explainable rule used to score a scheme against an applicant. */
 export interface EligibilityRule {
