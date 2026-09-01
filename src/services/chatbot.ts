@@ -1,13 +1,10 @@
 // ============================================================================
-// Demo assistant — INTENT-MATCHING RULES (not an AI model).
+// SchemeSaathi Rule-Based Assistant — Grounded Intent Matcher
 //
-// This powers the on-site chat widget. It is honest: it does NOT use a
-// language model. It matches the user's typed question against a set of
-// keyword "intents" and returns a scripted, helpful answer — plus an optional
-// in-app action link.
-//
-// To add a new answer: add an entry to INTENTS below with the keywords the
-// user might type and the reply text. Replies may include "\n" for line breaks.
+// Honest, deterministic, and 100% offline:
+// - No external LLM APIs (no OpenAI, no Gemini, no external network requests).
+// - Grounded directly in application data and deterministic engine outputs.
+// - Avoids unverified document claims or hardcoded eligibility rules.
 // ============================================================================
 
 export interface AssistantReply {
@@ -35,7 +32,7 @@ const INTENTS: Intent[] = [
     id: "greeting",
     keywords: ["hi", "hello", "hey", "namaste", "good morning", "good evening", "greetings"],
     reply: () => ({
-      text: "Hello! 👋 I'm the SchemeSaathi demo assistant.\nYou can ask me things like “which scheme is right for me”, “can I afford the EMI”, or “where do I apply”.",
+      text: "Hello! 👋 I'm the SchemeSaathi assistant.\nYou can ask me things like “which scheme is right for me”, “can I afford the EMI”, or “where do I apply”.",
     }),
   },
   {
@@ -46,8 +43,8 @@ const INTENTS: Intent[] = [
     ],
     reply: (ctx) => ({
       text: ctx.hasResult && ctx.bestScheme
-        ? `Based on the details you gave us, your best match is **${ctx.bestScheme}**. It's picked by our Smart Scheme Matching rules engine, which checks your business type, income, education and project cost — and explains every rule.\nYou can reopen your full result any time.`
-        : `I can help with that! Head to “Find My Scheme”, answer a few questions (or tap a demo profile), and our Smart Scheme Matching rules engine will recommend the best fit — and tell you exactly why.\nIt's rule-based, not AI: you can see every eligibility rule that drives the match.`,
+        ? `Based on your profile, your top match is **${ctx.bestScheme}**, evaluated by SchemeSaathi's deterministic rules engine.\nYou can review your full results and rule breakdown at any time.`
+        : `I can help with that! Go to “Find My Scheme”, answer the questionnaire (or select a demo profile), and our deterministic rules engine will evaluate and rank schemes for your profile.`,
       action: {
         label: ctx.hasResult ? "View your result" : "Go to Find My Scheme",
         to: ctx.hasResult ? "/results" : "/apply",
@@ -61,8 +58,8 @@ const INTENTS: Intent[] = [
       "tenure", "moratorium", "calculator", "monthly", "installment", "cost", "pay back",
     ],
     reply: () => ({
-      text: "After you get a recommendation, scroll to **Plan your repayment**. Sliders let you adjust the loan amount and tenure, and it instantly shows the estimated EMI, total interest, and what % of your monthly income that consumes.\nIt uses the standard reducing-balance EMI formula, including the moratorium period.",
-      action: { label: "Start with Find My Scheme", to: "/apply" },
+      text: "On the **Results** page, the repayment calculator uses the standard reducing-balance EMI formula (accounting for moratorium interest capitalization) to estimate monthly EMI and repayment burden share.\nYou can adjust loan amount and tenure sliders to test different scenarios.",
+      action: { label: "Go to Find My Scheme", to: "/apply" },
     }),
   },
   {
@@ -72,7 +69,7 @@ const INTENTS: Intent[] = [
       "apply where", "office", "agency", "disburse",
     ],
     reply: () => ({
-      text: "The **Channel Partner Locator** on your results page shows only partners that can process your recommended scheme — filtered by scheme category and sorted by distance (or capacity).\nEach partner shows its processing capacity and NPA/overdue risk so you can pick confidently.",
+      text: "The **Channel Partner Locator** on your results page filters channel partners (State Channelizing Agencies, Public Sector Banks, Regional Rural Banks, and NBFC-MFIs) by the recommended scheme category, sorted by distance.\nPartner cards display processing capacity and NPA risk indicators from the application data.",
       action: { label: "See eligible partners", to: "/results" },
     }),
   },
@@ -82,8 +79,11 @@ const INTENTS: Intent[] = [
       "document", "paper", "id", "aadhaar", "aadhar", "certificate", "required",
       "need to apply", "proof", "income certificate", "photo",
     ],
-    reply: () => ({
-      text: "Required documents differ by scheme, but a typical list includes: photo ID (Aadhaar/Voter ID), a community certificate, an income certificate, and a project or business plan.\nYour results page lists the exact documents for your recommended scheme, and the application checklist shows what to bring.",
+    reply: (ctx) => ({
+      text: ctx.hasResult && ctx.bestScheme
+        ? `Required documents for **${ctx.bestScheme}** are displayed in your application checklist on the results page. Each scheme in SchemeSaathi specifies its own verified document list.`
+        : `Required documents differ by scheme. Please select a scheme or complete “Find My Scheme” to see the verified document checklist. If information is unavailable, it needs verification from the official government source.`,
+      action: { label: ctx.hasResult ? "View document checklist" : "Find My Scheme", to: ctx.hasResult ? "/results" : "/apply" },
     }),
   },
   {
@@ -93,7 +93,7 @@ const INTENTS: Intent[] = [
       "മലയാളം", "change language",
     ],
     reply: () => ({
-      text: "You can switch the interface between English, Malayalam and Hindi using the language selector (globe icon) in the top navigation bar. The main navigation, buttons, form labels and key results are translated.",
+      text: "You can switch the interface between English, Malayalam, and Hindi using the language selector (globe icon) in the navigation bar.",
     }),
   },
   {
@@ -103,7 +103,7 @@ const INTENTS: Intent[] = [
       "government", "official",
     ],
     reply: () => ({
-      text: "Honest answer: this is a **demonstration prototype** built for a hackathon. The schemes, partners, and eligibility results are sample data — they do not represent a real government scheme or bank.\nThe assistant you're chatting with is also demo-only and rule-based, not a real AI model.",
+      text: "This application is a demonstration prototype for SchemeSaathi. The schemes and partner listings in the repository are demo data configured for demonstration purposes.",
     }),
   },
   {
@@ -112,29 +112,32 @@ const INTENTS: Intent[] = [
       "eligible", "eligibility", "income", "qualify", "caste", "category", "sc",
       "community", "education", "age", "requirements", "who can",
     ],
-    reply: () => ({
-      text: "Eligibility is decided by a transparent rules engine: your business type, annual income, education level, and project cost are checked against each scheme's limits (age and experience are optional factors).\nYour result page shows every rule, why you qualify, and anything you'd still need to meet.",
-      action: { label: "Check your eligibility", to: "/apply" },
+    reply: (ctx) => ({
+      text: ctx.hasResult && ctx.bestScheme
+        ? `Eligibility for **${ctx.bestScheme}** is determined by SchemeSaathi's deterministic rules engine. You can inspect every evaluated rule and qualification detail on your results page.`
+        : `Eligibility is determined by SchemeSaathi's deterministic rules engine. Complete the questionnaire on “Find My Scheme” to evaluate your profile against each scheme's criteria.`,
+      action: { label: ctx.hasResult ? "View eligibility results" : "Check your eligibility", to: ctx.hasResult ? "/results" : "/apply" },
     }),
   },
   {
     id: "contact",
     keywords: ["contact", "call", "phone", "help", "support", "talk", "human", "agent"],
     reply: () => ({
-      text: "This is a demo, so there's no human support line. In the real product, each channel partner card would show a direct contact. For now, use the **Call** button on any partner card to see a sample contact action.",
+      text: "In SchemeSaathi, each channel partner card displays a direct contact number. Use the **Call** button on any partner card on the results page to initiate contact.",
+      action: { label: "View partners", to: "/results" },
     }),
   },
   {
     id: "thanks",
     keywords: ["thank", "thanks", "great", "helpful", "cool", "nice", "awesome", "good"],
     reply: () => ({
-      text: "You're welcome! 😊 Good luck at the hackathon. Ask me anything about the platform.",
+      text: "You're welcome! 😊 Feel free to ask any question about SchemeSaathi schemes, eligibility, or repayment plans.",
     }),
   },
 ];
 
 const FALLBACK: AssistantReply = {
-  text: "I'm still learning — I can best help with finding a scheme, planning repayment, finding a partner, documents, and eligibility. Try one of the quick replies below, or reword your question.",
+  text: "I can help with finding a scheme, planning repayment, locating channel partners, checking documents, and understanding eligibility. Try asking one of the quick questions below or reword your query.",
 };
 
 /** Score every intent against the query and return the best reply. */
@@ -147,7 +150,7 @@ export function getReply(query: string, ctx: ReplyContext = {}): AssistantReply 
   for (const intent of INTENTS) {
     let score = 0;
     for (const kw of intent.keywords) {
-      if (q.includes(kw.toLowerCase())) score += kw.length; // longer keyword match = stronger
+      if (q.includes(kw.toLowerCase())) score += kw.length;
     }
     if (score > bestScore) {
       best = intent;
@@ -162,8 +165,9 @@ export function getReply(query: string, ctx: ReplyContext = {}): AssistantReply 
 /** Suggested quick-reply chips shown when the panel opens. */
 export const QUICK_REPLIES: string[] = [
   "Which scheme is right for me?",
+  "Why was this scheme recommended?",
+  "Am I eligible?",
+  "What documents do I need?",
   "Can I afford the EMI?",
   "Where do I apply?",
-  "What documents do I need?",
-  "Is this real?",
 ];
