@@ -30,6 +30,9 @@ export type PartnerType =
   | "Regional Rural Bank"
   | "NBFC-MFI";
 
+/** Eligibility and recommendation status for an evaluated scheme. */
+export type MatchStatus = "eligible" | "potentially-eligible" | "ineligible";
+
 /** A single explainable rule used to score a scheme against an applicant. */
 export interface EligibilityRule {
   /** Human-readable description of the rule. */
